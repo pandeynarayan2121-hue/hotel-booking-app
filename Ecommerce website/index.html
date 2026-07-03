@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shop</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav>
+  <h1 onclick="window.showPage('listing')">🛍 Shop</h1>
+  <button onclick="window.showPage('cart')">Cart (<span id="cart-count">0</span>)</button>
+</nav>
+
+<div id="listing" class="page active">
+  <div class="search-bar">
+    <input type="text" id="search" placeholder="Search products..." />
+  </div>
+  <div class="loading" id="loading">Loading products...</div>
+  <div class="grid" id="product-grid"></div>
+</div>
+
+<div id="product" class="page">
+  <button class="back-btn" onclick="window.showPage('listing')">← Back to products</button>
+  <div id="product-detail"></div>
+  <div class="reviews" id="product-reviews"></div>
+</div>
+
+<div id="cart" class="page">
+  <button class="back-btn" onclick="window.showPage('listing')">← Continue shopping</button>
+  <div class="cart-layout">
+    <div class="cart-items" id="cart-items-list"></div>
+    <div class="bill-summary" id="bill-summary"></div>
+  </div>
+</div>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>
