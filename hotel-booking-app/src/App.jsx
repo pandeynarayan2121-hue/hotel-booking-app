@@ -1,231 +1,214 @@
-import { useEffect, useState } from "react";
+import React, { useState } from 'react';
 
 function App() {
-  const [hotels, setHotels] = useState([]);
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  // Agar localStorage me pehle se 'user' ka data hai toh seedha Login screen dikhegi
-  const [isRegistered, setIsRegistered] = useState(
-    localStorage.getItem("user") ? true : false
-  );
-
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  // Hotels ka data API se fetch karne ke liye
-  useEffect(() => {
-    fetch("https://demohotelsapi.pythonanywhere.com/hotels/")
-      .then((res) => res.json())
-      .then((data) => setHotels(data.data))
-      .catch((err) => console.log("API Error:", err));
-  }, []);
-
-  // Register function
-  const register = () => {
-    if (!name || !email || !password) {
-      alert("Please fill all fields");
-      return;
+  // Dummy Hotels Data with Images
+  const hotels = [
+    {
+      id: 1,
+      name: 'Hotel Bliss Luxeon',
+      location: 'Mumbai',
+      price: '3017.74',
+      image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500&auto=format&fit=crop&q=60'
+    },
+    {
+      id: 2,
+      name: 'Hotel Marina Nebula',
+      location: 'Mumbai',
+      price: '2873.51',
+      image: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=500&auto=format&fit=crop&q=60'
+    },
+    {
+      id: 3,
+      name: 'Hotel Blissful Cascade',
+      location: 'Delhi',
+      price: '9765.25',
+      image: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=500&auto=format&fit=crop&q=60'
+    },
+    {
+      id: 4,
+      name: 'Hotel Haven Cascade',
+      location: 'Ahmedabad',
+      price: '7049.34',
+      image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=500&auto=format&fit=crop&q=60'
+    },
+    {
+      id: 5,
+      name: 'Hotel Bliss Zephyr',
+      location: 'Jaipur',
+      price: '8222.63',
+      image: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=500&auto=format&fit=crop&q=60'
+    },
+    {
+      id: 6,
+      name: 'Hotel Sky Utopia',
+      location: 'Hyderabad',
+      price: '8371.84',
+      image: 'https://images.unsplash.com/photo-1455587734955-081b22074882?w=500&auto=format&fit=crop&q=60'
     }
+  ];
 
-    localStorage.setItem(
-      "user",
-      JSON.stringify({ name, email, password })
-    );
-
-    alert("Registration Successful");
-    setIsRegistered(true);
-    setName("");
-    setEmail("");
-    setPassword("");
-  };
-
-  // Login function
-  const login = () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    if (
-      user &&
-      user.email === email &&
-      user.password === password
-    ) {
-      setIsLogin(true);
-      // Login hone ke baad inputs ko clear karne ke liye
-      setEmail("");
-      setPassword("");
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (email && password) {
+      setIsLoggedIn(true);
     } else {
-      alert("Invalid Email or Password");
+      alert('Please fill all fields');
     }
   };
 
-  // Agar user login nahi hai, toh Register/Login form dikhao
-  if (!isLogin) {
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setEmail('');
+    setPassword('');
+  };
+
+  // 1. LOGIN SCREEN
+  if (!isLoggedIn) {
     return (
-      <div
-        style={{
-          background: "#111827",
-          height: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          color: "white",
-        }}
-      >
-        <div
-          style={{
-            background: "#1f2937",
-            padding: "30px",
-            borderRadius: "10px",
-            width: "320px",
-          }}
-        >
-          {!isRegistered ? (
-            <>
-              <h2>Register</h2>
-
-              <input
-                type="text"
-                placeholder="Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                style={{ width: "100%", padding: "10px", marginBottom: "10px", borderRadius: "5px", border: "1px solid #4b5563", background: "#374151", color: "white" }}
-              />
-
-              <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                style={{ width: "100%", padding: "10px", marginBottom: "10px", borderRadius: "5px", border: "1px solid #4b5563", background: "#374151", color: "white" }}
-              />
-
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                style={{ width: "100%", padding: "10px", marginBottom: "10px", borderRadius: "5px", border: "1px solid #4b5563", background: "#374151", color: "white" }}
-              />
-
-              <button
-                onClick={register}
-                style={{
-                  width: "100%",
-                  padding: "10px",
-                  background: "#0ea5e9",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer"
-                }}
-              >
-                Register
-              </button>
-              
-              <p style={{ fontSize: "14px", marginTop: "10px", textAlign: "center", cursor: "pointer", color: "#38bdf8" }} onClick={() => setIsRegistered(true)}>
-                Already registered? Login here
-              </p>
-            </>
-          ) : (
-            <>
-              <h2>Login</h2>
-
-              <input
-                type="email"
-                placeholder="Email"
-                value={email} // Fixed: added value
-                onChange={(e) => setEmail(e.target.value)}
-                style={{ width: "100%", padding: "10px", marginBottom: "10px", borderRadius: "5px", border: "1px solid #4b5563", background: "#374151", color: "white" }}
-              />
-
-              <input
-                type="password"
-                placeholder="Password"
-                value={password} // Fixed: added value
-                onChange={(e) => setPassword(e.target.value)}
-                style={{ width: "100%", padding: "10px", marginBottom: "10px", borderRadius: "5px", border: "1px solid #4b5563", background: "#374151", color: "white" }}
-              />
-
-              <button
-                onClick={login}
-                style={{
-                  width: "100%",
-                  padding: "10px",
-                  background: "#22c55e",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "5px",
-                  cursor: "pointer"
-                }}
-              >
-                Login
-              </button>
-
-              <p style={{ fontSize: "14px", marginTop: "10px", textAlign: "center", cursor: "pointer", color: "#38bdf8" }} onClick={() => setIsRegistered(false)}>
-                Don't have an account? Register here
-              </p>
-            </>
-          )}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100vh',
+        backgroundColor: '#0f172a',
+        fontFamily: 'Arial, sans-serif'
+      }}>
+        <div style={{
+          backgroundColor: '#1e293b',
+          padding: '40px',
+          borderRadius: '12px',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.3)',
+          width: '100%',
+          maxWidth: '400px'
+        }}>
+          <h2 style={{ color: '#fff', textAlign: 'center', marginBottom: '24px' }}>Login</h2>
+          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <input 
+              type="email" 
+              placeholder="Email" 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              style={{
+                padding: '12px',
+                borderRadius: '6px',
+                border: '1px solid #475569',
+                backgroundColor: '#334155',
+                color: '#fff',
+                fontSize: '16px'
+              }}
+            />
+            <input 
+              type="password" 
+              placeholder="Password" 
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              style={{
+                padding: '12px',
+                borderRadius: '6px',
+                border: '1px solid #475569',
+                backgroundColor: '#334155',
+                color: '#fff',
+                fontSize: '16px'
+              }}
+            />
+            <button type="submit" style={{
+              padding: '12px',
+              borderRadius: '6px',
+              border: 'none',
+              backgroundColor: '#22c55e',
+              color: '#fff',
+              fontSize: '16px',
+              fontWeight: 'bold',
+              cursor: 'pointer'
+            }}>Login</button>
+          </form>
+          <p style={{ color: '#38bdf8', textAlign: 'center', marginTop: '16px', cursor: 'pointer' }}>
+            Don't have an account? Register here
+          </p>
         </div>
       </div>
     );
   }
 
-  // Agar user successfully login ho jata hai, toh Hotels Dashboard dikhao
+  // 2. HOTEL BOOKING HOME SCREEN
   return (
-    <div
-      style={{
-        background: "#111827",
-        minHeight: "100vh",
-        padding: "20px",
-        color: "white",
-      }}
-    >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-        <h1>Hotel Booking App</h1>
-        <button 
-          onClick={() => setIsLogin(false)} 
-          style={{ background: "#ef4444", color: "white", border: "none", padding: "8px 15px", borderRadius: "5px", cursor: "pointer" }}
-        >
-          Logout
-        </button>
+    <div style={{
+      backgroundColor: '#0f172a',
+      minHeight: '100vh',
+      color: '#fff',
+      fontFamily: 'Arial, sans-serif',
+      padding: '20px'
+    }}>
+      {/* Header */}
+      <div style={{
+        display: 'flex',
+        justifyContent: 'between',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        borderBottom: '1px solid #334155',
+        paddingBottom: '20px',
+        marginBottom: '30px'
+      }}>
+        <h1 style={{ margin: 0 }}>Hotel Booking App</h1>
+        <button onClick={handleLogout} style={{
+          backgroundColor: '#ef4444',
+          color: '#fff',
+          border: 'none',
+          padding: '8px 16px',
+          borderRadius: '6px',
+          cursor: 'pointer',
+          fontWeight: 'bold'
+        }}>Logout</button>
       </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-          gap: "20px",
-        }}
-      >
-        {hotels.slice(0, 12).map((hotel) => (
-          <div
-            key={hotel.id}
-            style={{
-              background: "#1f2937",
-              padding: "20px",
-              borderRadius: "10px",
-              textAlign: "center",
-              boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1)",
-              border: "1px solid #374151"
-            }}
-          >
-            <h2>{hotel.name}</h2>
-            <p><b>Location:</b> {hotel.location}</p>
-            <p><b>Price:</b> ₹{hotel.price}</p>
-            <button
+      {/* Grid Grid Area */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+        gap: '24px'
+      }}>
+        {hotels.map((hotel) => (
+          <div key={hotel.id} style={{
+            backgroundColor: '#1e293b',
+            borderRadius: '12px',
+            overflow: 'hidden',
+            boxShadow: '0 4px 6px rgba(0,0,0,0.2)',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            {/* Hotel Image Tag */}
+            <img 
+              src={hotel.image} 
+              alt={hotel.name} 
               style={{
-                background: "#0ea5e9",
-                color: "white",
-                border: "none",
-                padding: "10px 20px",
-                borderRadius: "6px",
-                cursor: "pointer",
-                fontWeight: "bold"
+                width: '100%',
+                height: '200px',
+                objectFit: 'cover'
               }}
-            >
-              Book Now
-            </button>
+            />
+            {/* Card Content */}
+            <div style={{ padding: '20px' }}>
+              <h3 style={{ margin: '0 0 10px 0', fontSize: '20px' }}>{hotel.name}</h3>
+              <p style={{ color: '#94a3b8', margin: '5px 0' }}><strong>Location:</strong> {hotel.location}</p>
+              <p style={{ color: '#38bdf8', fontSize: '18px', margin: '10px 0', fontWeight: 'bold' }}>
+                Price: ₹{hotel.price}
+              </p>
+              <button style={{
+                width: '100%',
+                padding: '10px',
+                backgroundColor: '#0284c7',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontWeight: 'bold',
+                marginTop: '10px'
+              }}>Book Now</button>
+            </div>
           </div>
         ))}
       </div>
